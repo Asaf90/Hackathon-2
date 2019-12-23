@@ -26,16 +26,32 @@ M6 = [1 0; 0 n2];
 M_slab = M6*M5*M4 %#ok<NOPTS>
 
 %3
-syms f
+f = f1;                 %We chose f = f1 = 50mm;
 delta_f = f * 1e-4;
 dist = 2*f + delta_f;
 M_lens = [1 0; -1/f 1];
 M_dist = [1 dist; 0 1];
 M_comp = M_lens * M_dist;
-for n = 2:10
-    M_n = M_lens * M_comp^n * M_lens;
-    beam_out = M_n * beam_in
+n = 2:50;
+for i = n
+    M_n = M_lens * M_dist * M_comp^(i-2) * M_lens;
+    beam_out(:,i-1) = M_n * beam_in;
 end
+
+figure()
+plot(n, beam_out(1,:), '*')
+grid on
+title('Exit Beam Height as a Function of N')
+xlabel('Number of lenses')
+ylabel('Exit Beam Height [mm]')
+
+figure()
+plot(n, beam_out(2,:), '*')
+grid on
+title('Exit Beam Angle as a Function of N')
+xlabel('Number of lenses')
+ylabel('Exit Beam Angle [deg]')
+ylim([-0.3 0.3])
 
 %% Phase 2: Spatial Propagation
 
