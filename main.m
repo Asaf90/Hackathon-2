@@ -14,6 +14,8 @@ M2 = [1 dist; 0 1];
 M3 = [1 0; -1/f2 1];
 M = M3*M2*M1 %#ok<NOPTS>
 beam_out = M*beam_in %#ok<NOPTS>
+
+
 %2
 syms d
 syms n2
@@ -22,6 +24,18 @@ M4 = [1 0; 0 1/n2];     %Assuming n1 = 1
 M5 = [1 d; 0 1];
 M6 = [1 0; 0 n2];
 M_slab = M6*M5*M4 %#ok<NOPTS>
+
+%3
+syms f
+delta_f = f * 1e-4;
+dist = 2*f + delta_f;
+M_lens = [1 0; -1/f 1];
+M_dist = [1 dist; 0 1];
+M_comp = M_lens * M_dist;
+for n = 2:10
+    M_n = M_lens * M_comp^n * M_lens;
+    beam_out = M_n * beam_in
+end
 
 %% Phase 2: Spatial Propagation
 
