@@ -55,9 +55,54 @@ ylim([-0.3 0.3])
 
 %% Phase 2: Spatial Propagation
 
+%1
+r = -5:0.01:5;
+I0 = 1;             %Assume peak intensity is 1.
+w = 20e-1;          %Assume w = 20cm
+I = I0*exp(-2*r.^2 / w.^2);
+figure()
+plot(r,I)
+title('Gaussian Profile Beam')
+xlabel('Radial distance [m]')
+ylabel('Intensity [W/m^2]')
 
+%2
+w0 = 20e-1;             %Assume w0 = 20cm
+lambda = 1064e-9;       %Assume wavelength is 1064nm
+z = 0:0.1:1e3;
+w_z = w0 * sqrt(1+((lambda * z)/(pi * w0^2)).^2);
+
+figure()
+plot(z, w_z)
+title('Propagation Distance')
+xlabel('Distance z [m]')
+ylabel('Spot Size [m]')
+
+%3
+w = 1;
+lambda = 1e-9;
+
+FWHM = sqrt(-0.5*log(0.5))  %#ok<NOPTS>
+D_135 = 1                   %#ok<NOPTS>
+z0 = w^2 * pi * lambda      %#ok<NASGU,NOPTS>
+
+%4
+w0 = 1e-2;
+n = 1;
+theta_beam = lambda / (pi * w * n);
+z0 = w0 / theta_beam;
+
+z = 1e3;
+w = w0 * z/z0               %#ok<NOPTS>
+
+%5
+theta = -pi/2:pi/200:pi/2; 
+I_lamb = cos(abs(theta));
+P_lamb = cumtrapz(I_lamb);
+figure()
+plot(theta,P_lamb);
 %% Phase 3: Beam Expander and Concentrator
-
+%1
 
 %% Phase 4: The Communication Link
 
