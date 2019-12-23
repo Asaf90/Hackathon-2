@@ -4,6 +4,7 @@ clear variables
 clc
 
 %% Phase 1: Ray Matricec - ABCD Matrix
+disp('-----Phase 1-----')
 %1
 f1 = 50;
 f2 = 25;
@@ -12,6 +13,7 @@ beam_in = [10 0]';
 M1 = [1 0; -1/f1 1];
 M2 = [1 dist; 0 1];
 M3 = [1 0; -1/f2 1];
+
 M = M3*M2*M1 %#ok<NOPTS>
 beam_out = M*beam_in %#ok<NOPTS>
 
@@ -54,7 +56,7 @@ ylabel('Exit Beam Angle [deg]')
 ylim([-0.3 0.3])
 
 %% Phase 2: Spatial Propagation
-
+disp('-----Phase 2-----')
 %1
 r = -5:0.01:5;
 I0 = 1;             %Assume peak intensity is 1.
@@ -102,6 +104,7 @@ P_lamb = cumtrapz(I_lamb);
 figure()
 plot(theta,P_lamb);
 %% Phase 3: Beam Expander and Concentrator
+disp('-----Phase 3-----')
 %1
 Din = 1e-2;
 Dout = 15e-2;
@@ -127,11 +130,50 @@ w = w0 * z/z0                       %#ok<NASGU,NOPTS>
 
 
 %% Phase 5: The Communication Link
+disp('-----Phase 5-----')
+%1
+r = 0:1e-3:10;10e-6;
+z = 0:0.01:100;
+con = 2e5 * exp(-r/10^-6);
+cross = 10^-6 * exp(-r/10^-6);
+gamma = trapz(con.*cross);
 
+tau = exp(-gamma*z);
+figure()
+plot(z,tau)
+title('Attenuation of Beam Through Aerosols')
+xlabel('Range [m]')
+ylabel('Attenuation')
 
+%2
+P = 1013.25;
+temp = 300;
+n0 = 1 + 7.8e-5 * P/temp            %#ok<NASGU,NOPTS>
+
+%3          TODO
+I0 = 1;
+mx = 1;
+sigmax = 1;
+th = 1;
+
+%4
+TSI = 1.365e3                        %#ok<NASGU,NOPTS>
+%From Wikipeida
 %% Phase 6: Filter
+disp('-----Phase 6-----')
+n = 1.5;
+d = 1e-6;
 
+theta_i = 0:pi/200:pi/2;
 
+theta_t = asin(sin(theta_i)/n);
+
+lambda = 2*d*n*cos(theta_t);
+figure()
+plot(theta_i, lambda)
+title('Transmission of Interference Filter')
+xlabel('\theta_i [rad]')
+ylabel('Wavelength [m]')
 %% Phase 7: Link Budget
 
 

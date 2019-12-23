@@ -98,16 +98,53 @@ w = w0 * z/z0               %#ok<NOPTS>
 %5
 theta = -pi/2:pi/200:pi/2; 
 I_lamb = cos(abs(theta));
-P_lamb = trapz(I_lamb)
+P_lamb = cumtrapz(I_lamb);
+figure()
+plot(theta,P_lamb);
 %% Phase 3: Beam Expander and Concentrator
+%1
+Din = 1e-2;
+Dout = 15e-2;
+f_num = 1;
+f1 = Din * f_num            %#ok<NASGU,NOPTS>
+f2 = Dout * f_num           %#ok<NASGU,NOPTS>
 
+%2
+f1 = 10e-2;
+f2 = 100e-2;
+lambda = 1.55e-6;
 
+theta_in = lambda / Din;
+theta_out = (f1/f2) * theta_in    %#ok<NASGU,NOPTS>
+
+%Assuming Gaussian Beam:
+w0 = lambda / (pi* theta_out);
+z0 = w0 / theta_out;
+z = 1e3;
+
+w = w0 * z/z0                       %#ok<NASGU,NOPTS>
 %% Phase 4: The Communication Link
 
 
 %% Phase 5: The Communication Link
+%1
+r = 0:1e-3:10;10e-6;
+z = 0:0.01:100;
+con = 2e5 * exp(-r/10^-6);
+cross = 10^-6 * exp(-r/10^-6);
+gamma = trapz(con.*cross);
 
+tau = exp(-gamma*z);
+figure()
+plot(z,tau)
+title('Attenuation of Beam Through Aerosols')
+xlabel('Range [m]')
+ylabel('Attenuation')
 
+%2
+P = 1013.25;
+temp = 300;
+n0 = 1 + 77*P/Temp
 %% Phase 6: Filter
 
 
