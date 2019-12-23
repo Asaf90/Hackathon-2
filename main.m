@@ -103,7 +103,26 @@ figure()
 plot(theta,P_lamb);
 %% Phase 3: Beam Expander and Concentrator
 %1
+Din = 1e-2;
+Dout = 15e-2;
+f_num = 1;
+f1 = Din * f_num            %#ok<NASGU,NOPTS>
+f2 = Dout * f_num           %#ok<NASGU,NOPTS>
 
+%2
+f1 = 10e-2;
+f2 = 100e-2;
+lambda = 1.55e-6;
+
+theta_in = lambda / Din;
+theta_out = (f1/f2) * theta_in    %#ok<NASGU,NOPTS>
+
+%Assuming Gaussian Beam:
+w0 = lambda / (pi* theta_out);
+z0 = w0 / theta_out;
+z = 1e3;
+
+w = w0 * z/z0                       %#ok<NASGU,NOPTS>
 %% Phase 4: The Communication Link
 
 
