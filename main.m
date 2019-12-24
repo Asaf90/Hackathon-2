@@ -103,6 +103,9 @@ I_lamb = cos(abs(theta));
 P_lamb = cumtrapz(I_lamb);
 figure()
 plot(theta,P_lamb);
+title('Accumulated Power of Lambertian Light Srouce')
+xlabel('\theta')
+ylabel('Accumulated Power')
 %% Phase 3: Beam Expander and Concentrator
 disp('-----Phase 3-----')
 %1
@@ -175,9 +178,84 @@ title('Transmission of Interference Filter')
 xlabel('\theta_i [rad]')
 ylabel('Wavelength [m]')
 %% Phase 7: Link Budget
+disp('-----Phase 7-----')
+%TODO
+range = 10e3;           %range = 10km
+tx_db = 30;             %tx power = 30dB
+apper = 0.01;           %tx and rx apperture = 0.01
+opt_amp = 30;           %optical amplifier = 30dB
+NF = 5;                 %NF = 5dB
+lambda = 1.55e-6;       %wavelength = 1.55um
+qe = 0.8;               %PIN diode quantum efficiency
+tx_point_err = 10e-3;   %tx pointing error = 10mrad
+
+
+S = 10;                 %snowfall rate 10 mm/h
+a = 0.0001023*lambda*1e9 + 3.7855466;   %a for wet snow
+b = 0.72;                               %b for wet snow
+gamma_snow = a*S^b;     %wet snow attenuation
+
+P_r = 0 + 2*opt_amp - 20*log10(apper) - 10*log10((lambda/4*pi*range)^2) - NF;
+
 
 
 %% Phase 8: Detector
+disp('-----Phase 8-----')
+%1
+disp('Q1: 12 bits')
+
+k_eff = 0.01;
+sigma2_th = 10e-14;
+R = 1;
+B = 1e9;
+P_R = 1e-6;
+
+M = 0:0.0001:0.01;
+SNR = (M*R*P_R).^2 ./ (2*k_eff*R*P_R*B*M.^2.5 + sigma2_th);
+figure()
+plot(M, SNR);
+title('SNR as a function of Gain')
+xlabel('Gain')
+ylabel('SNR')
+[max_SNR, max_IDX] = max(SNR);
+max_M = M(max_IDX)              %#ok<NASGU,NOPTS>
 
 
 %% Phase 9: Ideal Receiver
+disp('-----Phase 9-----')
+th_1 = 0:1:50;
+% x = 1:length(th_1);
+% th_2 = 0:1:50;
+% y = 1:length(th_1);
+% th_3 = 0:1:50;
+% z = 1:length(th_1);
+lambdaVec = [1 3 5 7];
+Q_gen=@(x,lambda) ((lambda.^x).*exp(-lambda)./factorial(x));
+min_location = [0,0,0];
+min=1;
+for x=1:length(th_1)
+    for y=x:length(th_1)
+        for z=y:length(th_1)
+            seg0 = 0:x; 
+            seg1 = x:y;
+            seg2 = y:z;
+            seg3 = z:length(th_1);
+            
+            correct1 = Q_gen(seg0,lambdaVec(1));
+            val1 = sum(correct1);
+            correct2 = Q_gen(seg1,lambdaVec(2));
+            val2 = sum(correct2);
+            correct3 = Q_gen(seg2,lambdaVec(3));
+            val3 = sum(correct3);
+            correct4 = Q_gen(seg3,lambdaVec(4));
+            val4 = sum(correct4);
+            val = 1-0.25*(val1+val2+val3+val4);
+            if (val<min)
+                min = val;
+                min_location=[x,y,z];
+            end
+        end
+    end
+end
+val                         %#ok<NASGU,NOPTS>
+[x,y,z]                     %#ok<NASGU,NOPTS>
